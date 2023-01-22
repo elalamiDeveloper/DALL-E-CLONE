@@ -18,6 +18,8 @@ const Home = () => {
   const [allPosts, setAllPosts] = useState([]);
 
   const [searchText, setSearchText] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [searchTimout, setSearchTimout] = useState('');
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -34,6 +36,21 @@ const Home = () => {
     fetchPosts();
   }, []);
 
+  const onChangeSearchTextHandler = (e) => {
+    clearTimeout(searchTimout);
+    setSearchText(e.target.value);
+
+    setSearchTimout(
+      setTimeout(() => {
+        const searchResults = allPosts.filter((item) =>
+          item.prompt.toLowerCase().includes(searchText.toLowerCase())
+        );
+
+        setSearchResults(searchResults);
+      }, 500)
+    );
+  };
+
   return (
     <section className="max-w-7xl mx-auto">
       <div>
@@ -47,7 +64,14 @@ const Home = () => {
       </div>
 
       <div className="mt-16">
-        <FormField />
+        <FormField
+          label="Search posts"
+          type="text"
+          name="text"
+          placeholder="Search posts"
+          value={searchText}
+          onChangeHandler={onChangeSearchTextHandler}
+        />
       </div>
 
       <div className="mt-10">
@@ -59,13 +83,16 @@ const Home = () => {
           <>
             {searchText && (
               <h2 className="font-medium text-[#666e75] text-x1 mb-3">
-                Showing results for{' '}
-                <span className="text-[#222328]">{searchText}</span>
+                Showing results for
+                <span className="text-[#222328]"> {searchText}</span>
               </h2>
             )}
             <div className="grid lg:grid-cols-4 sm:grid-cols-3 xs:grid-cols-2 grid-cols-1 gap-3">
               {searchText ? (
-                <RenderCards data={allPosts} title="No search results found" />
+                <RenderCards
+                  data={searchResults}
+                  title="No search results found"
+                />
               ) : (
                 <RenderCards data={allPosts} title="No posts found" />
               )}
