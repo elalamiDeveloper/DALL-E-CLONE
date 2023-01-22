@@ -1,10 +1,8 @@
 import express from 'express';
-import * as dotenv from 'dotenv';
-import { v2 as cloudinary } from 'cloudinary';
 
-import Post from '../mongo/models/post.js';
+import { getAllPosts, createPost } from '../controllers/postController.js';
 
-dotenv.config();
 const router = express.Router();
+router.route('/').get(getAllPosts).post(createPost);
 
 export { router };

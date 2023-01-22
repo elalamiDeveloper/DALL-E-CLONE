@@ -1,5 +1,7 @@
+import axios from 'axios';
 import { useState, useEffect } from 'react';
 
+import { serverUrl } from '../utils';
 import { Card, FormField, Loader } from '../components';
 
 const RenderCards = ({ data, title }) => {
@@ -13,9 +15,24 @@ const RenderCards = ({ data, title }) => {
 
 const Home = () => {
   const [loading, setLoading] = useState(false);
-  const [allPosts, setAllPosts] = useState([null]);
+  const [allPosts, setAllPosts] = useState([]);
 
   const [searchText, setSearchText] = useState('');
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const {
+          data: { data },
+        } = await axios.get(`${serverUrl}/posts`);
+        setAllPosts([...data.posts.reverse()]);
+      } catch (err) {
+        alert(err);
+      }
+    };
+
+    fetchPosts();
+  }, []);
 
   return (
     <section className="max-w-7xl mx-auto">
@@ -48,9 +65,9 @@ const Home = () => {
             )}
             <div className="grid lg:grid-cols-4 sm:grid-cols-3 xs:grid-cols-2 grid-cols-1 gap-3">
               {searchText ? (
-                <RenderCards data={[]} title="No search results found" />
+                <RenderCards data={allPosts} title="No search results found" />
               ) : (
-                <RenderCards data={[]} title="No posts found" />
+                <RenderCards data={allPosts} title="No posts found" />
               )}
             </div>
           </>

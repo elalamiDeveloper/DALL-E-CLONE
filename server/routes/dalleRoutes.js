@@ -1,8 +1,9 @@
 import express from 'express';
-import * as dotenv from 'dotenv';
-import { Configuration, OpenAIApi } from 'openai';
 
-dotenv.config();
+import { generateDalle } from '../controllers/dalleController.js';
+
 const router = express.Router();
+
+router.route('/').post(generateDalle);
 
 export { router };

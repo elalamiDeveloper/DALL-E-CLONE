@@ -16,7 +16,7 @@ app.use('/api/v1/posts', postRouter);
 app.use('/api/v1/dalle', dalleRouter);
 
 const startServer = () => {
-  const port = process.env.PORT || 5000;
+  const port = process.env.PORT || 5050;
   const db_url = process.env.MONGO_URL.replace(
     '<PASSWORD>',
     process.env.MONGO_PASSWORD

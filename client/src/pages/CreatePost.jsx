@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 import { preview } from '../assets';
 import { getRandomPrompt } from '../utils';
@@ -18,14 +19,50 @@ const CreatePost = () => {
     }));
   };
 
-  const onSubmitHandler = () => {};
+  const onSubmitHandler = async (e) => {
+    e.preventDefault();
+
+    if (form.prompt && form.photo) {
+      setLoading(true);
+      const {
+        data: { data },
+      } = await axios.post('http://localhost:5000/api/v1/posts', form);
+
+      navigate('/');
+      try {
+      } catch (err) {
+        alert(err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
 
   const onSupriseMeHandler = () => {
     const randomPrompt = getRandomPrompt(form.prompt);
     setForm((lastvalues) => ({ ...lastvalues, prompt: randomPrompt }));
   };
 
-  const onGenerateImageHandler = () => {};
+  const onGenerateImageHandler = async () => {
+    if (form.prompt) {
+      try {
+        setGeneratingImg(true);
+        const {
+          data: { data },
+        } = await axios.post('http://localhost:5000/api/v1/dalle', {
+          prompt: form.prompt,
+        });
+
+        setForm({ ...form, photo: `data:image/png;base64,${data.photo}` });
+      } catch (err) {
+        alert(err.message);
+      } finally {
+        setGeneratingImg(false);
+      }
+    } else {
+      alert('Please enter a prompt');
+    }
+  };
 
   return (
     <section className="max-w-7x1 mx-auto">
